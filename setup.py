@@ -15,5 +15,8 @@ setup(name='squeezeit',
 	entry_points="""
 	[console_scripts]
 	squeezeit = squeezeit.cli:start
-	"""
+	""",
+	install_requires=[
+		'pyyaml=>3.10'
+	]
 	)
