@@ -1,0 +1,1357 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>squeezeit.slimmer</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="squeezeit-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="squeezeit-module.html">Package&nbsp;squeezeit</a> ::
+        Module&nbsp;slimmer
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="squeezeit.slimmer-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module slimmer</h1><p class="nomargin-top"><span class="codelink"><a href="squeezeit.slimmer-pysrc.html">source&nbsp;code</a></span></p>
+<pre class="literalblock">
+
+ slimmer.py
+ Peter Bengtsson, mail@peterbe.com, 2004-2006
+
+ slimmer.py is a simple set of functions for compressing/optimizing
+ HTML, XHTML and CSS documents as strings.
+ Ideally used from other modules used something like this::
+
+  &gt;&gt;&gt; import slimmer
+  &gt;&gt;&gt; code = open('file.html').read()
+  &gt;&gt;&gt; slimmed = slimmer.xhtml_slimmer(code)
+  &gt;&gt;&gt; print len(code), len(slimmed)
+
+ You have to estimate yourself if you think it's worth using slimmer
+ on your documents if you're running a dynamic setting such as a
+ web application (e.g. Zope with CheckoutableTemplates).
+ On my PC I slimmed a 1MB .html document in 2.2 seconds and saved
+ 100KB. Saved 31KB on a 110KB .css file in 0.063 seconds.
+ And lastly, saved 17% in size in 0.016 seconds for www.python.org.
+ 
+
+Changes::
+ 0.1.30     Nov 2009    Better at guessing HTML or XHTML
+ 
+ 0.1.29     Nov 2008    New distutils release
+ 
+ 0.1.28     Nov 2008    Added some tests that tests UTF-8 and EUC-JP HTML
+ 
+ 0.1.27     Nov 2008    As a new distutils package
+ 
+ 0.1.26     Oct 2007    Minor improvement to js_slimmer for 'var x = [...]'
+                        
+ 0.1.25     Oct 2007    Slimming unicode text with hex colours like #FFFFFF 
+                        caused an error relating to string.translate()
+ 
+ 0.1.24     Sep 2007    &lt;!--#include ... not removed in HTML slimmer
+ 
+ 0.1.23     Apr 2007    Speedtest checks possibility of gzip
+ 
+ 0.1.22     Jul 2006    Added function guessSyntax(code)
+ 
+ 0.1.21     May 2006    Serious bug fix in _js_slimmer() with code like:
+                          '''for (var e in somearray)'''
+                        the result could be
+                          '''for (vareinsomearray)'''
+                          
+ 0.1.20     Feb 2006    Incorporated new experimental --hardcore option
+ 
+ 0.1.19     Feb 2006    Fixed bug in how js_slimmer() removes // comments
+    
+ 0.1.18     Jan 2006    Improved js_slimmer() floppy whitespace in parameter lists
+    
+ 0.1.17     Aug 2005    Fix in css_slimmer() for voice-family: hack (thanks Jens)
+ 
+ 0.1.16     Jun 2005    Improved js_slimmer() for sloppy function definitions
+    
+ 0.1.15     Jun 2005    Improved js_slimmer() for sloppy if|else|else if statements
+    
+ 0.1.14     Apr 2005    Added unit test of Holly-hack for CSS
+                        
+ 0.1.13     Apr 2005    Improved js_slimmer() to make 'y = 123;y = document;' to instead
+                        become 'y=123;y=document;'
+
+ 0.1.12     Mar 2005    Fixed css_slimmer() to put a linebreak before //--&gt;
+ 
+ 0.1.11     Feb 2005    Fixed js_slimmer() for some curly bracket endings
+ 
+ 0.1.10     Jan 2005    (Major patch by Baruch Even)
+                        - Fixed the -t option for testing, it didn't work, --test did work.
+                        - Fixed a typo s/whatspace/whitespace/
+                        - Fixed a bug were more than one consecutive space turned into nothing,
+                          added test 6 for this.
+                        - Revamped other code to completely eliminate end of lines. It works in
+                          FireFox 1.0
+                        - Changed the test cases to fit
+                        - Removed the last ; before } -&gt; s/;}/}/
+                        - Changed the test cases to fit
+
+ 0.1.9      Jan 2005    CLI interface can accept URLs
+                        
+ 0.1.8      Dec 2004    Added an option (UNQUOTE_HTML_ATTRIBUTES) to remove
+                        quotes from HTML attributes. (default is off)
+    
+ 0.1.7      Dec 2004    Separate out from CheckoutableTemplates and __all__
+                        variable fixed for js_slimmer.
+ 
+ 0.1.6      Dec 2004    Care for MacIE5 CSS Hack (http://www.sam-i-am.com/work/sandbox/css/mac_ie5_hack.html)
+    
+ 0.1.5      Nov 2004    Some improvements to js_slimmer()
+ 
+ 0.1.4      Nov 2004    Added first draft of js_slimmer()
+ 
+ 0.1.3      Nov 2004    Much improved CLI functions
+
+ 0.1.2      Sep 2004    Added basic CLI functions (see run())
+
+ 0.1.1      Sep 2004    Major speed improvment by removing
+                        the unquote_numerical feature.
+                        
+ 0.1.0      Sep 2004    First version numbering
+
+</pre>
+
+<hr />
+<div class="fields">      <p><strong>Version:</strong>
+        0.1.30
+      </p>
+</div><!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="squeezeit.slimmer.Usage-class.html" class="summary-name" onclick="show_private();">Usage</a>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="acceptableSyntax"></a><span class="summary-sig-name">acceptableSyntax</span>(<span class="summary-sig-arg">syntax</span>)</span><br />
+      return the syntax as we recognize it or None</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#acceptableSyntax">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="guessSyntax"></a><span class="summary-sig-name">guessSyntax</span>(<span class="summary-sig-arg">code</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#guessSyntax">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="slimmer"></a><span class="summary-sig-name">slimmer</span>(<span class="summary-sig-arg">code</span>,
+        <span class="summary-sig-arg">syntax</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">xhtml</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">hardcore</span>=<span class="summary-sig-default">False</span>)</span><br />
+      wrap all function we have</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#slimmer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="anyTrue"></a><span class="summary-sig-name">anyTrue</span>(<span class="summary-sig-arg">pred</span>,
+        <span class="summary-sig-arg">seq</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#anyTrue">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_css_slimmer"></a><span class="summary-sig-name">_css_slimmer</span>(<span class="summary-sig-arg">css</span>)</span><br />
+      remove repeating whitespace ( )</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#_css_slimmer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_html_slimmer"></a><span class="summary-sig-name">_html_slimmer</span>(<span class="summary-sig-arg">html</span>,
+        <span class="summary-sig-arg">xml</span>=<span class="summary-sig-default">0</span>)</span><br />
+      Optimize like XHTML but go one step further</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#_html_slimmer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_xhtml_slimmer"></a><span class="summary-sig-name">_xhtml_slimmer</span>(<span class="summary-sig-arg">xhtml</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#_xhtml_slimmer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_js_slimmer"></a><span class="summary-sig-name">_js_slimmer</span>(<span class="summary-sig-arg">js</span>,
+        <span class="summary-sig-arg">slim_functions</span>=<span class="summary-sig-default">False</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#_js_slimmer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="css_slimmer"></a><span class="summary-sig-name">css_slimmer</span>(<span class="summary-sig-arg">css</span>,
+        <span class="summary-sig-arg">hardcore</span>=<span class="summary-sig-default">False</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#css_slimmer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="xhtml_slimmer"></a><span class="summary-sig-name">xhtml_slimmer</span>(<span class="summary-sig-arg">xhtml</span>,
+        <span class="summary-sig-arg">hardcore</span>=<span class="summary-sig-default">False</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#xhtml_slimmer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="html_slimmer"></a><span class="summary-sig-name">html_slimmer</span>(<span class="summary-sig-arg">html</span>,
+        <span class="summary-sig-arg">hardcore</span>=<span class="summary-sig-default">False</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#html_slimmer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="js_slimmer"></a><span class="summary-sig-name">js_slimmer</span>(<span class="summary-sig-arg">js</span>,
+        <span class="summary-sig-arg">hardcore</span>=<span class="summary-sig-default">False</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#js_slimmer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="uniqify"></a><span class="summary-sig-name">uniqify</span>(<span class="summary-sig-arg">all</span>)</span><br />
+      borrowed from Tim Peters' algorithm on ASPN Cookbook</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#uniqify">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="squeezeit.slimmer-module.html#simplifyHexColours" class="summary-sig-name" onclick="show_private();">simplifyHexColours</a>(<span class="summary-sig-arg">text</span>)</span><br />
+      Replace all colour declarations where pairs repeat.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#simplifyHexColours">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__grr"></a><span class="summary-sig-name">__grr</span>()</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#__grr">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_pingable"></a><span class="summary-sig-name">_pingable</span>(<span class="summary-sig-arg">url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#_pingable">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_is_openable_url"></a><span class="summary-sig-name">_is_openable_url</span>(<span class="summary-sig-arg">path_or_url</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#_is_openable_url">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__guess_syntax"></a><span class="summary-sig-name">__guess_syntax</span>(<span class="summary-sig-arg">filepath</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#__guess_syntax">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__showversion"></a><span class="summary-sig-name">__showversion</span>()</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#__showversion">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__usage"></a><span class="summary-sig-name">__usage</span>()</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#__usage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="main"></a><span class="summary-sig-name">main</span>(<span class="summary-sig-arg">argv</span>=<span class="summary-sig-default">None</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#main">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_gzipText"></a><span class="summary-sig-name">_gzipText</span>(<span class="summary-sig-arg">content</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#_gzipText">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="run"></a><span class="summary-sig-name">run</span>(<span class="summary-sig-arg">inputfile</span>,
+        <span class="summary-sig-arg">syntax</span>,
+        <span class="summary-sig-arg">speedtest</span>,
+        <span class="summary-sig-arg">outputfile</span>,
+        <span class="summary-sig-arg">hardcore</span>=<span class="summary-sig-default">False</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="squeezeit.slimmer-pysrc.html#run">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="js_function_slimmer"></a><span class="summary-name">js_function_slimmer</span> = <code title="None">None</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="UNQUOTE_HTML_ATTRIBUTES"></a><span class="summary-name">UNQUOTE_HTML_ATTRIBUTES</span> = <code title="0">0</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="HTML"></a><span class="summary-name">HTML</span> = <code title="'html'"><code class="variable-quote">'</code><code class="variable-string">html</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="XHTML"></a><span class="summary-name">XHTML</span> = <code title="'xhtml'"><code class="variable-quote">'</code><code class="variable-string">xhtml</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="CSS"></a><span class="summary-name">CSS</span> = <code title="'css'"><code class="variable-quote">'</code><code class="variable-string">css</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="JS"></a><span class="summary-name">JS</span> = <code title="'js'"><code class="variable-quote">'</code><code class="variable-string">js</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="OK_SYNTAX"></a><span class="summary-name">OK_SYNTAX</span> = <code title="('html', 'xhtml', 'css', 'js')"><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">html</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">xhtml</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">css</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">js</code><code class="variable-quote">'</code><code class="variable-group">)</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="squeezeit.slimmer-module.html#some_javascript_code_regex" class="summary-name" onclick="show_private();">some_javascript_code_regex</a> = <code title="re.compile(r'function\(\)\s*\{|var \w|return false;|return true;|funct\
+ion \w{2,15}\(|\}\s*else if\s*\(')">re.compile(r'function\(\)\s<code class="re-op">*</code>\{<code class="re-op">|</code>va<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="squeezeit.slimmer-module.html#some_css_code_regex" class="summary-name" onclick="show_private();">some_css_code_regex</a> = <code title="re.compile(r'^#\w+\s*\{|body\s*\{|font-family:|margin:0|display:|heigh\
+t:\s*\d|border:1px')">re.compile(r'^#\w<code class="re-op">+</code>\s<code class="re-op">*</code>\{<code class="re-op">|</code>body\s<code class="re-op">*</code>\{<code class="re-op">|</code>font-f<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="_html_doctypes"></a><span class="summary-name">_html_doctypes</span> = <code title="('&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01')"><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01</code><code class="variable-quote">'</code><code class="variable-group">)</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="squeezeit.slimmer-module.html#_xhtml_doctypes" class="summary-name" onclick="show_private();">_xhtml_doctypes</a> = <code title="('&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional',
+ '&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict')"><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="squeezeit.slimmer-module.html#some_xhtml_code_regex" class="summary-name" onclick="show_private();">some_xhtml_code_regex</a> = <code title="re.compile(r'(?i)&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1\.0 Transit\
+ional|&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1\.0 Strict|&lt;html&gt;|&lt;tit\
+le&gt;|\s/&gt;|&lt;input|&lt;a\s+')">re.compile(r'<code class="re-flags">(?i)</code>&lt;!DOCTYPE html PUBLIC<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="squeezeit.slimmer-module.html#some_html_code_regex" class="summary-name" onclick="show_private();">some_html_code_regex</a> = <code title="re.compile(r'(?i)&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4\.01|&lt;table|\
+background=&quot;|&lt;script|border=0|&lt;!--')">re.compile(r'<code class="re-flags">(?i)</code>&lt;!DOCTYPE HTML PUBLIC <code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="css_comments"></a><span class="summary-name">css_comments</span> = <code title="re.compile(r'(?ms)/\*.*?\*/')">re.compile(r'<code class="re-flags">(?ms)</code>/\*.<code class="re-op">*?</code>\*/')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="hex_colour"></a><span class="summary-name">hex_colour</span> = <code title="re.compile(r'#\w{2}\w{2}\w{2}')">re.compile(r'#\w<code class="re-op">{2}</code>\w<code class="re-op">{2}</code>\w<code class="re-op">{2}</code>')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="f_IMD"></a><span class="summary-name">f_IMD</span> = <code title="26">26</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="f_MD"></a><span class="summary-name">f_MD</span> = <code title="24">24</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="f_M"></a><span class="summary-name">f_M</span> = <code title="8">8</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="html_comments_oneline"></a><span class="summary-name">html_comments_oneline</span> = <code title="re.compile(r'(?i)&lt;!--[\w\s].*?--&gt;')">re.compile(r'<code class="re-flags">(?i)</code>&lt;!--<code class="re-group">[</code>\w\s<code class="re-group">]</code>.<code class="re-op">*?</code>--&gt;')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="html_inline_css"></a><span class="summary-name">html_inline_css</span> = <code title="re.compile(r'(?ims)&lt;style.*?&gt;.*?&lt;/style&gt;')">re.compile(r'<code class="re-flags">(?ims)</code>&lt;style.<code class="re-op">*?</code>&gt;.<code class="re-op">*?</code>&lt;/style&gt;')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="html_inline_js"></a><span class="summary-name">html_inline_js</span> = <code title="re.compile(r'(?ims)&lt;script.*?&gt;.*?&lt;/script&gt;')">re.compile(r'<code class="re-flags">(?ims)</code>&lt;script.<code class="re-op">*?</code>&gt;.<code class="re-op">*?</code>&lt;/script&gt;')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="any_tag"></a><span class="summary-name">any_tag</span> = <code title="re.compile(r'(?ims)&lt;\w.*?&gt;')">re.compile(r'<code class="re-flags">(?ims)</code>&lt;\w.<code class="re-op">*?</code>&gt;')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="excess_whitespace"></a><span class="summary-name">excess_whitespace</span> = <code title="re.compile(r'(?m) \s+|\s +')">re.compile(r'<code class="re-flags">(?m)</code> \s<code class="re-op">+</code><code class="re-op">|</code>\s <code class="re-op">+</code>')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="excess_whitespace1"></a><span class="summary-name">excess_whitespace1</span> = <code title="re.compile(r'(?m)\w\s+\w')">re.compile(r'<code class="re-flags">(?m)</code>\w\s<code class="re-op">+</code>\w')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="excess_whitespace2"></a><span class="summary-name">excess_whitespace2</span> = <code title="re.compile(r'(?m)&quot;\s+&gt;')">re.compile(r'<code class="re-flags">(?m)</code>&quot;\s<code class="re-op">+</code>&gt;')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="excess_whitespace3"></a><span class="summary-name">excess_whitespace3</span> = <code title="re.compile(r'(?m)\'\s+&gt;')">re.compile(r'<code class="re-flags">(?m)</code>\'\s<code class="re-op">+</code>&gt;')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="squeezeit.slimmer-module.html#excess_whitespace4" class="summary-name" onclick="show_private();">excess_whitespace4</a> = <code title="re.compile(r'(?m)&quot;\s\s+\w+=&quot;|\'\s\s+\w+=\'|&quot;\s\s+\w+=|\'\s\s+\w+=')">re.compile(r'<code class="re-flags">(?m)</code>&quot;\s\s<code class="re-op">+</code>\w<code class="re-op">+</code>=&quot;<code class="re-op">|</code>\'\s\s<code class="re-op">+</code>\w<code class="re-op">+</code>=\<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="excess_whitespace6"></a><span class="summary-name">excess_whitespace6</span> = <code title="re.compile(r'(?m)\d\s+&gt;')">re.compile(r'<code class="re-flags">(?m)</code>\d\s<code class="re-op">+</code>&gt;')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="quotes_in_tag"></a><span class="summary-name">quotes_in_tag</span> = <code title="re.compile(r'([a-zA-Z]+)=&quot;([a-zA-Z0-9-_\.]+)&quot;')">re.compile(r'<code class="re-group">(</code><code class="re-group">[</code>a<code class="re-op">-</code>zA<code class="re-op">-</code>Z<code class="re-group">]</code><code class="re-op">+</code><code class="re-group">)</code>=&quot;<code class="re-group">(</code><code class="re-group">[</code>a<code class="re-op">-</code>zA<code class="re-op">-</code>Z0<code class="re-op">-</code>9-_\.<code class="re-group">]</code><code class="re-op">+</code><code class="re-group">)</code>&quot;')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="excess_whitespace_js"></a><span class="summary-name">excess_whitespace_js</span> = <code title="re.compile(r'(?m)^\s+(\S)')">re.compile(r'<code class="re-flags">(?m)</code>^\s<code class="re-op">+</code><code class="re-group">(</code>\S<code class="re-group">)</code>')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="excess_whitespace_js2"></a><span class="summary-name">excess_whitespace_js2</span> = <code title="re.compile(r'(?m)(\S+);\s+(\S+)')">re.compile(r'<code class="re-flags">(?m)</code><code class="re-group">(</code>\S<code class="re-op">+</code><code class="re-group">)</code>;\s<code class="re-op">+</code><code class="re-group">(</code>\S<code class="re-op">+</code><code class="re-group">)</code>')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="squeezeit.slimmer-module.html#whitespaced_func_def" class="summary-name" onclick="show_private();">whitespaced_func_def</a> = <code title="re.compile(r'(?ims)(function)\s+(\S+\(.*?\))\s*\{\s*(\S+)')">re.compile(r'<code class="re-flags">(?ims)</code><code class="re-group">(</code>function<code class="re-group">)</code>\s<code class="re-op">+</code><code class="re-group">(</code>\S<code class="re-op">+</code>\(.<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="squeezeit.slimmer-module.html#whitespaced_func_def2" class="summary-name" onclick="show_private();">whitespaced_func_def2</a> = <code title="re.compile(r'(?ims)function\s*\(\)\s*\{\s*(\S+)')">re.compile(r'<code class="re-flags">(?ims)</code>function\s<code class="re-op">*</code>\(\)\s<code class="re-op">*</code>\<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="js_comments_singlelines"></a><span class="summary-name">js_comments_singlelines</span> = <code title="re.compile(r'(?ims)^//.*?$|\s+//.*?$')">re.compile(r'<code class="re-flags">(?ims)</code>^//.<code class="re-op">*?</code>$<code class="re-op">|</code>\s<code class="re-op">+</code>//.<code class="re-op">*?</code>$')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="js_comments_singlelines2"></a><span class="summary-name">js_comments_singlelines2</span> = <code title="re.compile(r'(?ims)((^|;|\s)//.*?$)')">re.compile(r'<code class="re-flags">(?ims)</code><code class="re-group">(</code><code class="re-group">(</code>^<code class="re-op">|</code>;<code class="re-op">|</code>\s<code class="re-group">)</code>//.<code class="re-op">*?</code>$<code class="re-group">)</code>')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="js_comment_end"></a><span class="summary-name">js_comment_end</span> = <code title="re.compile(r'--&gt;')">re.compile(r'--&gt;')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="js_comment_start"></a><span class="summary-name">js_comment_start</span> = <code title="re.compile(r'(?m)(&lt;!--(.*?))$\s(\w+)')">re.compile(r'<code class="re-flags">(?m)</code><code class="re-group">(</code>&lt;!--<code class="re-group">(</code>.<code class="re-op">*?</code><code class="re-group">)</code><code class="re-group">)</code>$\s<code class="re-group">(</code>\w<code class="re-op">+</code><code class="re-group">)</code>')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="squeezeit.slimmer-module.html#whitespaced_controls" class="summary-name" onclick="show_private();">whitespaced_controls</a> = <code title="re.compile(r'(?ims)(for|else if|if|catch|while)\s*\((.*?)\)\s*\{\s*(\S\
++)')">re.compile(r'<code class="re-flags">(?ims)</code><code class="re-group">(</code>for<code class="re-op">|</code>else if<code class="re-op">|</code>if<code class="re-op">|</code>catc<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="squeezeit.slimmer-module.html#single_whitespaced_controls" class="summary-name" onclick="show_private();">single_whitespaced_controls</a> = <code title="re.compile(r'(?ims)(try|else)\s*\{\s*(\S+)')">re.compile(r'<code class="re-flags">(?ims)</code><code class="re-group">(</code>try<code class="re-op">|</code>else<code class="re-group">)</code>\s<code class="re-op">*</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="squeezeit.slimmer-module.html#sloppy_conditionals" class="summary-name" onclick="show_private();">sloppy_conditionals</a> = <code title="re.compile(r'\(\s*(\S+)\s*(==|!=)\s*(\S+)\)')">re.compile(r'\(\s<code class="re-op">*</code><code class="re-group">(</code>\S<code class="re-op">+</code><code class="re-group">)</code>\s<code class="re-op">*</code><code class="re-group">(</code>==<code class="re-op">|</code>!=<code class="re-group">)</code>\s<code class="re-op">*</code><code class="re-group">(</code>\S<code class="re-op">+</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="sloppy_parameters"></a><span class="summary-name">sloppy_parameters</span> = <code title="re.compile(r'\(([\(\w\+\)\s,]+)\)')">re.compile(r'\(<code class="re-group">(</code><code class="re-group">[</code>\(\w\+\)\s,<code class="re-group">]</code><code class="re-op">+</code><code class="re-group">)</code>\)')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="sloppy_ifs"></a><span class="summary-name">sloppy_ifs</span> = <code title="re.compile(r'\s*(if|else if|else)\s*([\{\(])')">re.compile(r'\s<code class="re-op">*</code><code class="re-group">(</code>if<code class="re-op">|</code>else if<code class="re-op">|</code>else<code class="re-group">)</code>\s<code class="re-op">*</code><code class="re-group">(</code><code class="re-group">[</code>\{\(<code class="re-group">]</code><code class="re-group">)</code>')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="squeezeit.slimmer-module.html#sloppy_declarations" class="summary-name" onclick="show_private();">sloppy_declarations</a> = <code title="re.compile(r'var\s+(\w+)\s*=\s*(\d+|\w+|&quot;[\w\+ ]&quot;|\[[\'\w \.,&quot;]+\])')">re.compile(r'var\s<code class="re-op">+</code><code class="re-group">(</code>\w<code class="re-op">+</code><code class="re-group">)</code>\s<code class="re-op">*</code>=\s<code class="re-op">*</code><code class="re-group">(</code>\d<code class="re-op">+</code><code class="re-op">|</code>\w<code class="re-op">+</code><code class="re-op">|</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="squeezeit.slimmer-module.html#sloppy_simple_declarations" class="summary-name" onclick="show_private();">sloppy_simple_declarations</a> = <code title="re.compile(r'(\w+)\s*=\s*(\d+|\w+|&quot;[\w\+ ]&quot;)')">re.compile(r'<code class="re-group">(</code>\w<code class="re-op">+</code><code class="re-group">)</code>\s<code class="re-op">*</code>=\s<code class="re-op">*</code><code class="re-group">(</code>\d<code class="re-op">+</code><code class="re-op">|</code>\w<code class="re-op">+</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="sloppy_increments"></a><span class="summary-name">sloppy_increments</span> = <code title="re.compile(r'(\w+)\s*(\+=|-=)\s*(\d*|&quot;\w+&quot;)')">re.compile(r'<code class="re-group">(</code>\w<code class="re-op">+</code><code class="re-group">)</code>\s<code class="re-op">*</code><code class="re-group">(</code>\+=<code class="re-op">|</code>-=<code class="re-group">)</code>\s<code class="re-op">*</code><code class="re-group">(</code>\d<code class="re-op">*</code><code class="re-op">|</code>&quot;\w<code class="re-op">+</code>&quot;<code class="re-group">)</code>')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="js_multiline_comments"></a><span class="summary-name">js_multiline_comments</span> = <code title="re.compile(r'(?ms)/\*.*?\*/')">re.compile(r'<code class="re-flags">(?ms)</code>/\*.<code class="re-op">*?</code>\*/')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="closing_curly_brackets"></a><span class="summary-name">closing_curly_brackets</span> = <code title="re.compile(r'(?m)\s*\}')">re.compile(r'<code class="re-flags">(?m)</code>\s<code class="re-op">*</code>\}')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="opening_curly_brackets"></a><span class="summary-name">opening_curly_brackets</span> = <code title="re.compile(r'(?m)\{\s*')">re.compile(r'<code class="re-flags">(?m)</code>\{\s<code class="re-op">*</code>')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="squeezeit.slimmer-module.html#usage" class="summary-name" onclick="show_private();">usage</a> = <code title="'''slimmer.py Compress web files on the command line
+Peter Bengtsson, &lt;mail@peterbe.com&gt;, Nov 2004
+
+USAGE: python slimmer.py [OPTIONS] /path/to/input.html [xhtml|html|css\
+|js]
+
+Options:
+    -t, --test         Perform a speed and compression test
+..."><code class="variable-quote">'</code><code class="variable-string">slimmer.py Compress web files on the command line\nPe</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'squeezeit'"><code class="variable-quote">'</code><code class="variable-string">squeezeit</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="x"></a><span class="summary-name">x</span> = <code title="'&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01'"><code class="variable-quote">'</code><code class="variable-string">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="simplifyHexColours"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">simplifyHexColours</span>(<span class="sig-arg">text</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="squeezeit.slimmer-pysrc.html#simplifyHexColours">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Replace all colour declarations where pairs repeat. I.e. #FFFFFF =&gt;
+  #FFF; #CCEEFF =&gt; #CEF and #EFEFEF, #EFCDI9 avoided</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== VARIABLES DETAILS ==================== -->
+<a name="section-VariablesDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-VariablesDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="some_javascript_code_regex"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">some_javascript_code_regex</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+re.compile(r'function\(\)\s<code class="re-op">*</code>\{<code class="re-op">|</code>var \w<code class="re-op">|</code>return false;<code class="re-op">|</code>return true;<code class="re-op">|</code>funct<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+ion \w<code class="re-op">{2,15}</code>\(<code class="re-op">|</code>\}\s<code class="re-op">*</code>else if\s<code class="re-op">*</code>\(')
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="some_css_code_regex"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">some_css_code_regex</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+re.compile(r'^#\w<code class="re-op">+</code>\s<code class="re-op">*</code>\{<code class="re-op">|</code>body\s<code class="re-op">*</code>\{<code class="re-op">|</code>font-family:<code class="re-op">|</code>margin:0<code class="re-op">|</code>display:<code class="re-op">|</code>heigh<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+t:\s<code class="re-op">*</code>\d<code class="re-op">|</code>border:1px')
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_xhtml_doctypes"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">_xhtml_doctypes</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict</code><code class="variable-quote">'</code><code class="variable-group">)</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="some_xhtml_code_regex"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">some_xhtml_code_regex</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+re.compile(r'<code class="re-flags">(?i)</code>&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1\.0 Transit<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+ional<code class="re-op">|</code>&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1\.0 Strict<code class="re-op">|</code>&lt;html&gt;<code class="re-op">|</code>&lt;tit<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+le&gt;<code class="re-op">|</code>\s/&gt;<code class="re-op">|</code>&lt;input<code class="re-op">|</code>&lt;a\s<code class="re-op">+</code>')
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="some_html_code_regex"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">some_html_code_regex</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+re.compile(r'<code class="re-flags">(?i)</code>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4\.01<code class="re-op">|</code>&lt;table<code class="re-op">|</code><span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+background=&quot;<code class="re-op">|</code>&lt;script<code class="re-op">|</code>border=0<code class="re-op">|</code>&lt;!--')
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="excess_whitespace4"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">excess_whitespace4</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+re.compile(r'<code class="re-flags">(?m)</code>&quot;\s\s<code class="re-op">+</code>\w<code class="re-op">+</code>=&quot;<code class="re-op">|</code>\'\s\s<code class="re-op">+</code>\w<code class="re-op">+</code>=\'<code class="re-op">|</code>&quot;\s\s<code class="re-op">+</code>\w<code class="re-op">+</code>=<code class="re-op">|</code>\'\s\s<code class="re-op">+</code>\w<code class="re-op">+</code>=')
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="whitespaced_func_def"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">whitespaced_func_def</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+re.compile(r'<code class="re-flags">(?ims)</code><code class="re-group">(</code>function<code class="re-group">)</code>\s<code class="re-op">+</code><code class="re-group">(</code>\S<code class="re-op">+</code>\(.<code class="re-op">*?</code>\)<code class="re-group">)</code>\s<code class="re-op">*</code>\{\s<code class="re-op">*</code><code class="re-group">(</code>\S<code class="re-op">+</code><code class="re-group">)</code>')
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="whitespaced_func_def2"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">whitespaced_func_def2</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+re.compile(r'<code class="re-flags">(?ims)</code>function\s<code class="re-op">*</code>\(\)\s<code class="re-op">*</code>\{\s<code class="re-op">*</code><code class="re-group">(</code>\S<code class="re-op">+</code><code class="re-group">)</code>')
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="whitespaced_controls"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">whitespaced_controls</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+re.compile(r'<code class="re-flags">(?ims)</code><code class="re-group">(</code>for<code class="re-op">|</code>else if<code class="re-op">|</code>if<code class="re-op">|</code>catch<code class="re-op">|</code>while<code class="re-group">)</code>\s<code class="re-op">*</code>\(<code class="re-group">(</code>.<code class="re-op">*?</code><code class="re-group">)</code>\)\s<code class="re-op">*</code>\{\s<code class="re-op">*</code><code class="re-group">(</code>\S<code class="re-op"></code><span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+<code class="re-op">+</code><code class="re-group">)</code>')
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="single_whitespaced_controls"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">single_whitespaced_controls</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+re.compile(r'<code class="re-flags">(?ims)</code><code class="re-group">(</code>try<code class="re-op">|</code>else<code class="re-group">)</code>\s<code class="re-op">*</code>\{\s<code class="re-op">*</code><code class="re-group">(</code>\S<code class="re-op">+</code><code class="re-group">)</code>')
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="sloppy_conditionals"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">sloppy_conditionals</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+re.compile(r'\(\s<code class="re-op">*</code><code class="re-group">(</code>\S<code class="re-op">+</code><code class="re-group">)</code>\s<code class="re-op">*</code><code class="re-group">(</code>==<code class="re-op">|</code>!=<code class="re-group">)</code>\s<code class="re-op">*</code><code class="re-group">(</code>\S<code class="re-op">+</code><code class="re-group">)</code>\)')
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="sloppy_declarations"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">sloppy_declarations</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+re.compile(r'var\s<code class="re-op">+</code><code class="re-group">(</code>\w<code class="re-op">+</code><code class="re-group">)</code>\s<code class="re-op">*</code>=\s<code class="re-op">*</code><code class="re-group">(</code>\d<code class="re-op">+</code><code class="re-op">|</code>\w<code class="re-op">+</code><code class="re-op">|</code>&quot;<code class="re-group">[</code>\w\+ <code class="re-group">]</code>&quot;<code class="re-op">|</code>\[<code class="re-group">[</code>\'\w \.,&quot;<code class="re-group">]</code><code class="re-op">+</code>\]<code class="re-group">)</code>')
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="sloppy_simple_declarations"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">sloppy_simple_declarations</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+re.compile(r'<code class="re-group">(</code>\w<code class="re-op">+</code><code class="re-group">)</code>\s<code class="re-op">*</code>=\s<code class="re-op">*</code><code class="re-group">(</code>\d<code class="re-op">+</code><code class="re-op">|</code>\w<code class="re-op">+</code><code class="re-op">|</code>&quot;<code class="re-group">[</code>\w\+ <code class="re-group">]</code>&quot;<code class="re-group">)</code>')
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="usage"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">usage</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-quote">'''</code><code class="variable-string">slimmer.py Compress web files on the command line</code>
+<code class="variable-string">Peter Bengtsson, &lt;mail@peterbe.com&gt;, Nov 2004</code>
+<code class="variable-string"></code>
+<code class="variable-string">USAGE: python slimmer.py [OPTIONS] /path/to/input.html [xhtml|html|css</code><span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+<code class="variable-string">|js]</code>
+<code class="variable-string"></code>
+<code class="variable-string">Options:</code>
+<code class="variable-string">    -t, --test         Perform a speed and compression test</code>
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="squeezeit-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Sat Dec 31 10:55:54 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
