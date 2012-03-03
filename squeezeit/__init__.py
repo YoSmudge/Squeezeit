@@ -190,7 +190,8 @@ def processbundle(configfile, config, bundlename, bundledata):
 				'raw':False,
 				'min':False,
 				'gz':False
-			}
+			},
+			'files':[]
 		},
 		'javascript':{
 			'md5':False,
@@ -203,7 +204,8 @@ def processbundle(configfile, config, bundlename, bundledata):
 				'raw':False,
 				'min':False,
 				'gz':False
-			}
+			},
+			'files':[]
 		}
 	}
 	
@@ -215,6 +217,7 @@ def processbundle(configfile, config, bundlename, bundledata):
 		#Some info
 		md5 = hashlib.md5(rawdata).hexdigest()
 		bundleinfo['javascript']['md5'] = md5
+		bundleinfo['javascript']['files'] = bundledata['includes']['javascript']
 		
 		#Calculate the filename
 		filename = {}
@@ -256,6 +259,7 @@ def processbundle(configfile, config, bundlename, bundledata):
 		#Some info
 		md5 = hashlib.md5(rawdata).hexdigest()
 		bundleinfo['css']['md5'] = md5
+		bundleinfo['css']['files'] = bundledata['includes']['css']
 
 		#Calculate the filename
 		filename = {}
