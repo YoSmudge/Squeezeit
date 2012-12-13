@@ -145,12 +145,23 @@ def loadfiles(configfile, config, srcdir, files):
 	
 	for file in files:
 		try:
+			if '*' in file:
+				file, suffix = file.split('*')
 			filepath = os.path.join(srcdir,file)
-			f = open(filepath)
-			filedata = f.read()
-			f.close()
-			
-			rawdata.append(filedata)
+			if os.path.isdir(filepath):
+				for (dirpath,dirnames,filenames) in os.walk(filepath):
+					for filename in filenames:
+						if suffix and not filename.endswith(suffix):
+							continue
+						f = open(os.path.join(dirpath,filename))
+						filedata = f.read()
+						f.close()
+						rawdata.append(filedata)
+			else:
+				f = open(filepath)
+				filedata = f.read()
+				f.close()
+				rawdata.append(filedata)
 		except:
 			logging.warning("Could not read {0}". format(filepath))
 	
