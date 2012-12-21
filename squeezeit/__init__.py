@@ -224,7 +224,7 @@ def processbundle(configfile, config, bundlename, bundledata):
 	if bundledata['includes']['javascript']:
 		logging.info('-Processing Javascript')
 		rawdata = loadfiles(configfile, config, config['javascript'], bundledata['includes']['javascript'])
-		rawdata = ''.join(rawdata)
+		rawdata = '\n;'.join(rawdata)
 		
 		#Some info
 		md5 = hashlib.md5(rawdata).hexdigest()
