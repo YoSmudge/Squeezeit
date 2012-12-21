@@ -165,7 +165,7 @@ def loadfiles(configfile, config, srcdir, files):
 		except:
 			logging.warning("Could not read {0}". format(filepath))
 	
-	return ''.join(rawdata)
+	return rawdata
 
 def writedata(configfile, config, output, filename, rawdata):
 	"""Write the file data to the output directory"""
@@ -224,6 +224,7 @@ def processbundle(configfile, config, bundlename, bundledata):
 	if bundledata['includes']['javascript']:
 		logging.info('-Processing Javascript')
 		rawdata = loadfiles(configfile, config, config['javascript'], bundledata['includes']['javascript'])
+		rawdata = ''.join(rawdata)
 		
 		#Some info
 		md5 = hashlib.md5(rawdata).hexdigest()
@@ -266,6 +267,7 @@ def processbundle(configfile, config, bundlename, bundledata):
 	if bundledata['includes']['css']:
 		logging.info('-Processing CSS')
 		rawdata = loadfiles(configfile, config, config['css'], bundledata['includes']['css'])
+		rawdata = ''.join(rawdata)
 
 		#Some info
 		md5 = hashlib.md5(rawdata).hexdigest()
