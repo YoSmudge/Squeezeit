@@ -3,3 +3,4 @@ dist
 squeezeit.egg-info
 *.pyc
 example
+ENV
